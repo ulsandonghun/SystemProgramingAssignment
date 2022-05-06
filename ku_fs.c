@@ -8,7 +8,6 @@
 void generateChild();
 int main(int argc,char *argv[]){
     printf("\n들어온 인자수 : %d\n",argc);
-
     char * str=argv[1];
     int processNum=atoi(argv[2]);
  
