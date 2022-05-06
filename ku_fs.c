@@ -11,7 +11,7 @@ int main(int argc,char *argv[]){
 
     char * str=argv[1];
     int processNum=atoi(argv[2]);
-
+ 
     printf("\n검색할 패턴 값: %s\n",str);
     printf("\n생성할 프로세스 수: %d\n",processNum);
     pid_t pid[processNum];
