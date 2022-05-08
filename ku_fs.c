@@ -12,49 +12,20 @@
 #include <mqueue.h>
 
 void generateChild();
-int searchFunc();
+void searchFunc();
 int main(int argc,char *argv[]){
    // printf("\n들어온 인자수 : %d\n",argc);
-    char * str=argv[1];
+     char * str=argv[1];
     int processNum=atoi(argv[2]);
  
    // printf("\n검색할 패턴 값: %s\n",str);
     //printf("\n생성할 프로세스 수: %d\n",processNum);
     pid_t one;
+    pid_t pid[processNum];
 
     if((one =fork())==0){
        // printf("\n 자식 프로세스의 PID : %d", getpid());
-        struct mq_attr attr;
-    int value;
-    unsigned int prio=0;
-    mqd_t mqdes;
-    
-
-    attr.mq_maxmsg=10;
-    attr.mq_msgsize=sizeof(value);
-
-    mqdes=mq_open(NAME, O_CREAT|O_RDWR,0666,&attr);
-    
-
-    /*for(int i=0;i<10;i++){
-        printf("sending a message %d\n",value);
-
-        mq_send(mqdes,(char*)&value,MSG_SIZE,prio);
-        value++;
-    }*/
-       
-         char *ptr=strstr(input,str);
-    int count=0;
-    
-    while(ptr!=NULL){
-        value=(ptr-input);
-        mq_send(mqdes,(char*)&value,sizeof(int),prio);
-       // printf("\nsending val : %d",value);
-        ptr=strstr(ptr+1,str);
-        count++;
-
-    }
-    mq_close(mqdes);
+      generateChild(processNum,pid,str);
     }
     else{
       //  printf("\n 부모프로세스의 PID : %d",getpid());
@@ -85,36 +56,46 @@ int main(int argc,char *argv[]){
    exit(0);
     
     }
-    //pid_t pid[processNum];
-    //generateChild(processNum,pid);
-
-   /* for(int i=0;i<MAXS;i++){
-        printf("%c ",input[i]);
-    }
-    printf("\n");
-    char *ptr=strstr(input,str);
-    int count=0;
-    while(ptr!=NULL){
-        printf("%ld\n",(ptr-input));
-        ptr=strstr(ptr+1,str);
-        count++;
-
-    }*/
+   
   
     exit(0);
  
 
 }
-void generateChild(int num,pid_t pid[]){
+void generateChild(int num,pid_t pid[],char* str){
     int childCount=0;
     for(int i=0;i<childCount;i++){
         if((pid[i]=fork())==0){
             exit(0);
         }
     }
-    
+    searchFunc(str);
+
 }
-int searchFunc(){
+void searchFunc(char* str){
+        struct mq_attr attr;
+    int value;
+    unsigned int prio=0;
+    mqd_t mqdes;
+    
+
+    attr.mq_maxmsg=10;
+    attr.mq_msgsize=sizeof(value);
+
+    mqdes=mq_open(NAME, O_CREAT|O_RDWR,0666,&attr);
+    
+         char *ptr=strstr(input,str);
+    int count=0;
+    
+    while(ptr!=NULL){
+        value=(ptr-input);
+        mq_send(mqdes,(char*)&value,sizeof(int),prio);
+       // printf("\nsending val : %d",value);
+        ptr=strstr(ptr+1,str);
+        count++;
+
+    }
+    mq_close(mqdes);
     
 }
 
