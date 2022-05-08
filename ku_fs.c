@@ -14,15 +14,16 @@
 void generateChild();
 int searchFunc();
 int main(int argc,char *argv[]){
-    printf("\n들어온 인자수 : %d\n",argc);
+   // printf("\n들어온 인자수 : %d\n",argc);
     char * str=argv[1];
     int processNum=atoi(argv[2]);
  
-    printf("\n검색할 패턴 값: %s\n",str);
-    printf("\n생성할 프로세스 수: %d\n",processNum);
+   // printf("\n검색할 패턴 값: %s\n",str);
+    //printf("\n생성할 프로세스 수: %d\n",processNum);
     pid_t one;
 
     if((one =fork())==0){
+       // printf("\n 자식 프로세스의 PID : %d", getpid());
         struct mq_attr attr;
     int value;
     unsigned int prio=0;
@@ -44,9 +45,11 @@ int main(int argc,char *argv[]){
        
          char *ptr=strstr(input,str);
     int count=0;
+    
     while(ptr!=NULL){
-        int value=(ptr-input);
+        value=(ptr-input);
         mq_send(mqdes,(char*)&value,sizeof(int),prio);
+       // printf("\nsending val : %d",value);
         ptr=strstr(ptr+1,str);
         count++;
 
@@ -54,6 +57,7 @@ int main(int argc,char *argv[]){
     mq_close(mqdes);
     }
     else{
+      //  printf("\n 부모프로세스의 PID : %d",getpid());
          struct mq_attr attr;
     int value=0;
   
@@ -66,19 +70,25 @@ int main(int argc,char *argv[]){
 
     mqdes=mq_open(NAME,O_CREAT|O_RDWR,0666,&attr);
 
-    printf("\n받은 메세지 출력: ");
-   for(int i=0;i<10;i++){
+//    printf("\n받은 메세지 출력: ");
+    char *ptr =strstr(input,str);
+   while(ptr!=NULL){
 
         mq_receive(mqdes,(char*)&value,MSG_SIZE,&prio);
-        printf("%d ",value);
+        printf("%d\n",value);
+        ptr=strstr(ptr+1,str);
+
    }
+   
+   mq_close(mqdes);
+   mq_unlink(NAME);
+   exit(0);
     
-       printf("\n");
     }
     //pid_t pid[processNum];
     //generateChild(processNum,pid);
 
-    for(int i=0;i<MAXS;i++){
+   /* for(int i=0;i<MAXS;i++){
         printf("%c ",input[i]);
     }
     printf("\n");
@@ -89,20 +99,20 @@ int main(int argc,char *argv[]){
         ptr=strstr(ptr+1,str);
         count++;
 
-    }
-    
-
+    }*/
+  
+    exit(0);
+ 
 
 }
 void generateChild(int num,pid_t pid[]){
     int childCount=0;
-    while(pid[childCount]=fork()){
-        childCount++;
-        if(childCount==num){
-            break;
+    for(int i=0;i<childCount;i++){
+        if((pid[i]=fork())==0){
+            exit(0);
         }
-
     }
+    
 }
 int searchFunc(){
     
